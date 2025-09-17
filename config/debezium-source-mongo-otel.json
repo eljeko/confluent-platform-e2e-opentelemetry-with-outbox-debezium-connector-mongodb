@@ -1,0 +1,32 @@
+{
+  "name": "debezium-source-mongo-otel",
+  "config": {
+    "connector.class": "io.debezium.connector.mongodb.MongoDbConnector",        
+    "mongodb.connection.string": "mongodb://mongo:27017/?replicaSet=rs0",
+    "producer.interceptor.classes":"io.debezium.tracing.DebeziumTracingProducerInterceptor",
+    "topic.prefix": "test",
+    "database.include.list": "outbox",
+    "collection.include.list": "outbox.loans",
+    "mongodb.user": "data-platform-cdc",
+    "mongodb.password": "password",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "transforms": "outbox",
+    "transforms.outbox.type": "io.debezium.connector.mongodb.transforms.outbox.MongoEventRouter",
+    "transforms.outbox.collection.field.event.key": "aggregateId",
+    "transforms.outbox.collection.field.event.id": "aggregateId",
+    "transforms.outbox.collection.field.event.payload": "eventPayload",
+    "transforms.outbox.collection.expand.json.payload": "true",
+    "transforms.outbox.collection.fields.additional.placement": "aggregateType:header:aggregate-type,aggregateId:header:aggregate-id,eventType:header:event-type",
+    "transforms.outbox.route.by.field": "topicName",
+    "transforms.outbox.route.topic.replacement": "${routedByValue}",
+    "transforms.unwrap.type": "io.debezium.connector.mongodb.transforms.ExtractNewDocumentState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.operation.header": "false",
+    "transforms.unwrap.delete.handling.mode": "drop",
+    "transforms.unwrap.array.encoding": "array",
+    "errors.tolerance": "all",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true"
+  }
+}

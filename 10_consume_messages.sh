@@ -1,0 +1,1 @@
+docker exec -it broker /usr/bin/kafka-console-consumer --topic CONSUMER_LOAN --bootstrap-server broker:9092 --property print.key=true  --from-beginning --property print.headers=true
