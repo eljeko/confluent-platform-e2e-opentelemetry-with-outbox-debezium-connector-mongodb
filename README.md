@@ -37,7 +37,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 # Start the environment
 
-You can choose to start with telemetry active also for conenct:
+You can choose to start with telemetry active also for connect:
 
 ```
 scripts/bootstrap-cdc-mongo.sh
@@ -81,13 +81,13 @@ Now go to [Jager UI](http://localhost:16686)
 
 
 
-**NOTE:** The Mongo Source conector used in this example will use opentelemtry for E2E tracing, specifically this version of MongoEventRouter can't customize the manes of the fields for open telemetry, in a next releases of Debezium this will be fixed by a patch.
+**NOTE:** The Mongo Source conector used in this example will use opentelemtry for E2E tracing, specifically this version of MongoEventRouter can't customize the [names of the fields for open telemetry](https://debezium.io/documentation/reference/stable/integrations/tracing.html#_configuration_options), in a next releases of Debezium this will be fixed by a patch.
 
 ---
 
 # Configuration notes
 
-Environments variables:
+Environments variables for complete tracing (including connect):
 
  ```
       OTEL_SERVICE_NAME: kafka-cp-connect
@@ -120,10 +120,10 @@ This seems to be uncorrect and you have to setup only:
 
 **`OTEL_INSTRUMENTATION_KAFKA_ENABLED` to false** 
 
-Disables default implementation of telemetry for kafka client (used by connect to produce and consume) this is needed to have E2E tracing otherwise a new tracing will be created.
+Disables default implementation of telemetry for kafka client (used by connect to produce and consume) this is needed to have E2E tracing otherwise a new traceid will be created.
 
 **Connector config**
 
-This interceptor will preserve and propagate the tracing context for E2E tracin in place of the default present in OTEL
+This interceptor will preserve and propagate the tracing context for E2E tracin in place of the default present in OTEL (the lib is downloade by the script `release-lib.sh`)
 
 `"producer.interceptor.classes":"io.debezium.tracing.DebeziumTracingProducerInterceptor"`
