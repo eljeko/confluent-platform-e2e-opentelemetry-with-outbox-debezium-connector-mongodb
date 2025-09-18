@@ -1,5 +1,5 @@
 
-# CDC with Debezium MongoDB Source Connector and Outbox Event Router and Telemetry
+# CDC with Debezium MongoDB Source Connector: Outbox Event Router and Telemetry
 
 # Prepare the opentelemetry and debezium interceptor libs
 
