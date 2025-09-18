@@ -7,7 +7,7 @@
     <artifactId>artifact-id</artifactId>
     <version>0.0.1</version>
     <properties>
-        <version.opentelemetry.api>1.52.0</version.opentelemetry.api>
+        <version.opentelemetry.api>1.39.0</version.opentelemetry.api>
         <version.opentelemetry.kafka.clients.2.6>1.23.0-alpha</version.opentelemetry.kafka.clients.2.6>
     </properties>
     <dependencies>
@@ -45,6 +45,11 @@
             <groupId>io.debezium</groupId>
             <artifactId>debezium-interceptor</artifactId>
             <version>3.2.2.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry.javaagent</groupId>
+            <artifactId>opentelemetry-javaagent</artifactId>
+            <version>2.18.1</version>
         </dependency>
     </dependencies>
 </project>

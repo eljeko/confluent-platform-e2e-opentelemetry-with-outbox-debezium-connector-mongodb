@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ThreadLocalRandom;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.SpanKind;
@@ -44,25 +45,37 @@ public class KafkaEventConsumer {
     // Continue the trace
     return message.ack().thenRun(() -> {
       try (Scope scope = extractedContext.makeCurrent()) {
-        Span span = Span.current();
-        if (!span.getSpanContext().isValid()) {
-          // No upstream context → start one
-          span = tracer.spanBuilder("onMessage").setSpanKind(SpanKind.CONSUMER).startSpan();
+
+        // Add random artificial processing delay
+        try {
+          long sleepMillis = ThreadLocalRandom.current().nextLong(300, 500);
+          Thread.sleep(sleepMillis);
+          LOG.infof("Simulated processing delay: %d ms", sleepMillis);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+        }finally {
+          Span span = Span.current();
+          if (!span.getSpanContext().isValid()) {
+            // No upstream context → start one
+            span = tracer.spanBuilder("onMessage").setSpanKind(SpanKind.CONSUMER).startSpan();
+          }
+
+          LOG.infof("Kafka message with key=%s arrived", message.getKey());
+          LOG.infof("Continuing trace: traceId=%s spanId=%s", span.getSpanContext().getTraceId(), span.getSpanContext().getSpanId());
+
+          // Add custom headers
+          String eventId = getHeaderAsString(message, "id");
+          String eventType = getHeaderAsString(message, "event-type");
+          span.setAttribute("event.id", eventId);
+          span.setAttribute("event.type", eventType);
+
+          span.addEvent("Message processed");
+          span.setAttribute("processing.success", true);
+
+          span.end();
         }
 
-        LOG.infof("Kafka message with key=%s arrived", message.getKey());
-        LOG.infof("Continuing trace: traceId=%s spanId=%s", span.getSpanContext().getTraceId(), span.getSpanContext().getSpanId());
 
-        // Add custom headers
-        String eventId = getHeaderAsString(message, "id");
-        String eventType = getHeaderAsString(message, "event-type");
-        span.setAttribute("event.id", eventId);
-        span.setAttribute("event.type", eventType);
-
-        span.addEvent("Message processed");
-        span.setAttribute("processing.success", true);
-
-        span.end();
       } catch (Exception e) {
         LOG.error("Error while processing Kafka message", e);
         Span.current().recordException(e);

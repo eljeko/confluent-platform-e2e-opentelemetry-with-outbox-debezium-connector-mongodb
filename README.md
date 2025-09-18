@@ -37,10 +37,17 @@ java -jar target/quarkus-app/quarkus-run.jar
 
 # Start the environment
 
-Run the script:
+You can choose to start with telemetry active also for conenct:
 
 ```
 scripts/bootstrap-cdc-mongo.sh
+```
+
+Or start with with telemetry exporter disabled for connect (you will not found the connect traces in Jaeger), in this case Connect works as a *passthrough* for telemetry:
+
+
+```
+scripts/bootstrap-cdc-export-off-mongo
 ```
 
 After the docker compose started you can run:
@@ -86,6 +93,7 @@ Environments variables:
       OTEL_SERVICE_NAME: kafka-cp-connect
       OTEL_TRACES_EXPORTER: otlp
       OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
       OTEL_JAVAAGENT_DEBUG: false
       OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
       OTEL_EXPORTER_OTLP_ENDPOINT: "http://jaeger:4318"
