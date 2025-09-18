@@ -124,6 +124,6 @@ Disables default implementation of telemetry for kafka client (used by connect t
 
 **Connector config**
 
-This interceptor will preserve and propagate the tracing context for E2E tracin in place of the default present in OTEL (the lib is downloade by the script `release-lib.sh`)
+This interceptor will preserve and propagate the tracing context for E2E tracin in place of the default present in OTEL (the lib is downloaded by the script `release-lib.sh`)
 
 `"producer.interceptor.classes":"io.debezium.tracing.DebeziumTracingProducerInterceptor"`
